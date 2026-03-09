@@ -18,3 +18,8 @@ build/
 # IDE
 .vscode/
 .idea/
+
+# Force include src but ignore artifacts
+src/**/__pycache__/
+src/**/*.egg-info/
+src/**/.DS_Store
