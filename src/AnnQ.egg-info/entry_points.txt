@@ -1,0 +1,2 @@
+[console_scripts]
+annq = AnnQ.main:main

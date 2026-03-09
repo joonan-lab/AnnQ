@@ -1,0 +1,108 @@
+{
+  "Mouse_Custom_Model": {
+    "Apical.progenitors": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Astrocytes": {
+      "Tissue": "Brain",
+      "Cell_Class": "Glia"
+    },
+    "CThPN": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Cajal.Retzius.cells": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Cycling.glial.cells": {
+      "Tissue": "Brain",
+      "Cell_Class": "Glia"
+    },
+    "DL.CPN": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "DL_CPN_1": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "DL_CPN_2": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Doublet": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    },
+    "Endothelial.cells": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    },
+    "Ependymocytes": {
+      "Tissue": "Brain",
+      "Cell_Class": "Glia"
+    },
+    "Immature.neurons": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Intermediate.progenitors": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Interneurons": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Layer.4": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Layer.6b": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Low.quality.cells": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    },
+    "Microglia": {
+      "Tissue": "Brain",
+      "Cell_Class": "Glia"
+    },
+    "Migrating.neurons": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "NP": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "Oligodendrocytes": {
+      "Tissue": "Brain",
+      "Cell_Class": "Glia"
+    },
+    "Pericytes": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    },
+    "Red.blood.cells": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    },
+    "SCPN": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "UL.CPN": {
+      "Tissue": "Brain",
+      "Cell_Class": "Neural"
+    },
+    "VLMC": {
+      "Tissue": "Brain",
+      "Cell_Class": "Others"
+    }
+  }
+}
