@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "AnnQ"
+version = "1.0.0"
+description = "Quality control and classification tool for single-cell annotation results, with post-hoc out-of-reference (OOR) analysis for perturbation studies"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  { name="Joon An", email="joonan30@korea.ac.kr" },
+]
+keywords = ["single-cell", "bioinformatics", "cell-type-annotation", "quality-control", "out-of-reference", "perturbation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "pandas>=1.3.0",
+    "numpy>=1.20.0",
+    "scipy>=1.7.0",
+    "matplotlib>=3.4.0",
+    "seaborn>=0.11.0",
+    "pyyaml>=5.4.0"
+]
+
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/joonan30/annq"
+Documentation = "https://github.com/joonan30/annq/blob/main/README.md"
+Repository = "https://github.com/joonan30/annq"
+"Bug Tracker" = "https://github.com/joonan30/annq/issues"
+
+[project.scripts]
+annq = "AnnQ.main:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=21.0",
+    "flake8>=3.9",
+    "mypy>=0.900",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+AnnQ = ["data/*.json"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311']

@@ -1,0 +1,282 @@
+# AnnQ
+
+Quality control and classification tool for single-cell annotation results,
+with **post-hoc out-of-reference (OOR) analysis for perturbation studies**.
+
+**Version:** 1.0
+**Updated:** 2025-01-13
+
+---
+
+## What's New in v3.4
+
+- **Flexible OOR comparison modes**: binary, multi-group, or pairwise
+- **Configurable OOR settings** in YAML (no more hardcoded parameters!)
+- **Enhanced visualizations**: heatmaps, fold change plots, distribution comparisons
+- **Auto-detection** of experimental groups
+- **Multi-condition support**: beyond WT/Het/Hom (e.g., multiple treatments, timepoints)
+
+---
+
+## Installation
+
+```bash
+# Create conda environment
+conda create -n annq python=3.10 -y
+conda activate annq
+
+# Install dependencies
+conda install -c conda-forge numpy pandas scipy matplotlib seaborn pyyaml -y
+
+# Install AnnQ
+cd annq
+pip install -e .
+```
+
+---
+
+## Quick Start
+
+```bash
+# Interactive setup (recommended)
+annq --init --interactive
+
+# Run annotation quality analysis
+annq -c config.yaml
+
+# Run post-hoc OOR analysis (cluster-wise genotype comparison)
+annq --oor -c config.yaml
+```
+
+---
+
+## Classification Modes
+
+**1. Standard**  
+Single threshold (default: 0.5)
+
+**2. Soft**  
+Two-tier thresholds (e.g. 0.5 / 0.3), captures weak but meaningful secondary identities
+
+**3. Adaptive**  
+Automatically suggests thresholds based on data distribution (IQR-based)
+
+---
+
+## Cell Groups
+
+### Core Groups (hard assignments)
+
+| Group | Definition | Interpretation |
+|------|-----------|----------------|
+| G0 | Single clear hit | High-confidence annotation |
+| G1 | No clear hit | Ambiguous |
+| G2 | Multi-hit within same Cell_Class | Same lineage ambiguity |
+| G3 | Multi-hit across Cell_Class | Cross-lineage / transitional |
+
+> **Note:**  
+> Groups **G4 / G4s (cross-tissue)** have been removed.  
+> All cross-lineage ambiguity is now handled within **G3 / G3s**.
+
+---
+
+### Soft Mode Groups
+
+| Group | Interpretation |
+|------|---------------|
+| G2s | Weak same-lineage signal |
+| G3s | Transitional or mixed identity cells |
+
+---
+
+### G1 Refinement (optional)
+
+| Subgroup | Criteria | Interpretation |
+|---------|---------|----------------|
+| G1a_LowConf | P1 < 0.25 | Likely low information |
+| G1b_Ambiguous | P1 ≥ 0.3, P2/P1 ≥ 0.6 | Biologically transitional |
+| G1c_Diffuse | High entropy | Broad, unresolved identity |
+
+---
+
+## Core Annotation Metrics
+
+- **P1**: Highest predicted probability
+- **P2**: Second highest predicted probability
+- **Delta**: P1 − P2
+- **Admixture**: P2 / P1
+- **Entropy (A_Ambiguity)**: Spread of probabilities across cell types
+
+---
+
+## Out-of-Reference (OOR) Analysis
+
+AnnQ provides a **post-hoc analysis mode** to quantify how far each cell deviates
+from a reference annotation space, particularly useful for **mutant or perturbation studies**.
+
+### New in v3.4: Flexible Comparison Modes
+
+```yaml
+oor:
+  comparison_mode: "multi"  # Choose: binary, multi, pairwise
+  
+  # Binary mode: WT vs all others combined
+  # Multi mode: WT vs Het vs Hom (separate comparisons)
+  # Pairwise mode: all combinations (WT-Het, WT-Hom, Het-Hom)
+```
+
+### Cell-level OOR Score
+
+For each cell, AnnQ computes:
+
+**`OOR_mahal_score`** (configurable via `out_col`)
+
+This score represents:
+
+> How atypical a cell's annotation probability structure is,
+> relative to baseline cells within the same cluster.
+
+It is computed as a **Mahalanobis distance** using the following features (configurable):
+
+- P1 (annotation confidence)
+- Delta (P1 − P2)
+- Admixture (P2 / P1)
+- Entropy (annotation ambiguity)
+
+The baseline cells within each cluster define the reference distribution.
+
+---
+
+### Defining OOR Cells
+
+OOR is **not interpreted by absolute value**.
+
+Cells are classified as *out-of-reference* if:
+
+> Their OOR score exceeds the **tail quantile (default: 95th percentile)** 
+> of baseline cells within the same cluster.
+
+This ensures that baseline heterogeneity is respected.
+
+---
+
+### Cluster-level OOR Summary
+
+Running:
+
+```bash
+annq --oor -c config.yaml
+```
+
+produces:
+
+```
+outdir/
+└── oor/
+    ├── oor_results.csv.gz                    # Per-cell OOR scores
+    ├── oor_cluster_summary.csv               # Per-cluster statistics
+    ├── fig_oor_median_by_cluster.png         # Median comparison
+    ├── fig_oor_heatmap.png                   # Cluster x Condition heatmap
+    ├── fig_oor_fold_change.png               # Effect size plot
+    ├── fig_oor_median_vs_tail.png            # Shift vs enrichment
+    └── fig_oor_distributions_top10.png       # Top affected clusters
+```
+
+Key statistics per cluster (multi-group mode):
+- Baseline, Comparison (group labels)
+- n_baseline, n_comparison
+- median_baseline, median_comparison
+- delta_median, fold_change
+- tail_frac_baseline, tail_frac_comparison, tail_enrichment
+- p_mannwhitney, p_ks
+
+---
+
+### Example Configurations
+
+#### Example 1: Genotype Study (WT vs Het vs Hom)
+
+```yaml
+oor:
+  enabled: true
+  condition_col: "Genotype"
+  baseline_label: "WT"
+  comparison_mode: "multi"
+  comparison_groups: ["Het", "Hom"]  # Or leave empty for auto-detect
+```
+
+#### Example 2: Treatment Study (Multiple Timepoints)
+
+```yaml
+oor:
+  enabled: true
+  condition_col: "Timepoint"
+  baseline_label: "Day0"
+  comparison_mode: "multi"
+  comparison_groups: ["Day3", "Day7", "Day14"]
+```
+
+#### Example 3: Pairwise Comparisons
+
+```yaml
+oor:
+  enabled: true
+  condition_col: "Treatment"
+  baseline_label: "Control"
+  comparison_mode: "pairwise"  # All pairs: Control-A, Control-B, A-B
+  comparison_groups: ["Treatment_A", "Treatment_B"]
+```
+
+---
+
+## Configuration
+
+All OOR settings are now in `config.yaml`:
+
+```yaml
+oor:
+  # Comparison settings
+  comparison_mode: "multi"           # binary, multi, pairwise
+  baseline_label: "WT"
+  comparison_groups: []              # Auto-detect if empty
+  
+  # Quality filters
+  min_baseline_cells_per_cluster: 30
+  min_comparison_cells_per_cluster: 10
+  
+  # Features for OOR calculation
+  feature_cols:
+    - "P1"
+    - "P2"
+    - "Delta"
+    - "Entropy"
+  
+  # Outlier detection
+  tail_q: 0.95
+  
+  # Visualization
+  generate_plots: true
+  plot_settings:
+    plot_top_n_clusters: 10
+    figure_format: "png"
+    figure_dpi: 150
+```
+
+See `config_v3.4.yaml` for full example.
+
+---
+
+## Contact
+
+Joon An  
+joonan30@korea.ac.kr
+
+---
+
+## Citation
+
+If you use AnnQ in your research, please cite:
+
+```
+Lee. et al. (2026). AnnQ: reference-based quantification of cellular abnormality at single-cell resolution. [Preprint]
+```
