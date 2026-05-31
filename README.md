@@ -336,7 +336,7 @@ Use the exact `.pkl` filename of the CellTypist model you used during annotation
 If you use AnnQ in your research, please cite:
 
 ```
-Lee. et al. (2026). AnnQ: reference-based quantification of cellular abnormality at single-cell resolution. [Preprint]
+Lee. et al. (2026). AnnQ: reference-based quantification of cellular abnormality at single-cell resolution.
 ```
 
 ---
